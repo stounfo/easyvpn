@@ -1,7 +1,7 @@
-name: ci
+name: test_ansible
 on: [push, pull_request_target]
 jobs:
-  lint:
+  test_ansible:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
