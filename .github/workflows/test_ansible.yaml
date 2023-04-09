@@ -1,0 +1,25 @@
+name: ci
+on: [push, pull_request_target]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.0
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Install Ansible
+        run: |
+          ansible-playbook \
+          --inventory 127.0.0.1, \
+          --connection=local \
+          deploy.yaml
+
