@@ -1,0 +1,36 @@
+- name: Generate Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: /tmp/Dockerfile
+
+- name: Generate index.html
+  template:
+    src: index.html.j2
+    dest: /tmp/index.html
+
+- name: Generate proxy.conf
+  template:
+    src: proxy.conf.j2
+    dest: /tmp/proxy.conf
+
+- name: Build Docker image
+  community.general.docker_image:
+    build:
+      path: /tmp
+    name: my_nginx
+    tag: latest
+    force_source: yes
+    source: build
+
+- name: Run Docker container
+  community.general.docker_container:
+    name: my_nginx_container
+    image: my_nginx:latest
+    state: started
+    network_mode: host
+    recreate: yes
+    restart_policy: always
+    volumes:
+      - "/var/www/certbot:/var/www/certbot"
+      - "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem:/etc/nginx/ssl/live/{{ domain_name }}/fullchain.pem"
+      - "/etc/letsencrypt/live/{{ domain_name }}/privkey.pem:/etc/nginx/ssl/live/{{ domain_name }}/privkey.pem"

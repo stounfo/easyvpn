@@ -1,3 +1,7 @@
 - hosts: all
   roles:
-    - wireguard
+    - role: docker
+      tags: docker
+
+    - role: nginx
+      tags: nginx

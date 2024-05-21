@@ -1,1 +1,1 @@
-# wireguard
+ansible-playbook deploy/main.yaml --tags docker -i deploy/inventory.yaml -u root

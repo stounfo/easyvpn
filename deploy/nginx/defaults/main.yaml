@@ -1,0 +1,5 @@
+nginx_version: stable-alpine3.17
+
+domain_name: "stounfo.com"
+
+site_message: "Го по пиву?"

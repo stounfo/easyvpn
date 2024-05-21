@@ -1,0 +1,8 @@
+- name: Install Docker
+  block:
+    - name: Install Docker
+      include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_package_state: latest
+  become: yes

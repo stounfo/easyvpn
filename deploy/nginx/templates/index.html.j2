@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site_message }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9c2e0; /* Light pink background, reminiscent of Barbie */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #d0247e; /* Deeper pink for contrast */
+            margin: 0 0 20px;
+        }
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white for a soft look */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-width: 600px; /* Ensures the content is not too stretched on wider screens */
+        }
+        p {
+            font-size: 1.2em;
+            color: #d6336c; /* Keeping the pink theme consistent */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ site_message }}</h1>
+    </div>
+</body>
+</html>
