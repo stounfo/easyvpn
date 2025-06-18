@@ -8,3 +8,6 @@
 # iCloud generated files
 *.icloud
 
+# idea
+.idea
+

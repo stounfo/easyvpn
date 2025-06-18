@@ -1,0 +1,77 @@
+- name: Download xray-core archive
+  get_url:
+    url: "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip"
+    dest: /tmp/xray.zip
+    mode: '0644'
+
+- name: Install unzip if not present
+  apt:
+    name: unzip
+    state: present
+
+- name: Unpack xray-core binary
+  unarchive:
+    src: /tmp/xray.zip
+    dest: /usr/local/bin/
+    remote_src: yes
+    mode: '0755'
+    extra_opts: ['-j']
+
+- name: Ensure user 'xray' exists
+  user:
+    name: xray
+    system: yes
+    shell: /usr/sbin/nologin
+    create_home: no
+
+- name: Create xray config directory
+  file:
+    path: /etc/xray
+    state: directory
+    owner: xray
+    group: xray
+    mode: '0755'
+
+- name: Upload default xray config.json
+  copy:
+    src: files/config.json
+    dest: /etc/xray/config.json
+    owner: xray
+    group: xray
+    mode: '0644'
+  notify: Restart xray service
+
+- name: Create xray log directory
+  file:
+    path: /var/log/xray
+    state: directory
+    owner: xray
+    group: xray
+    mode: '0755'
+
+- name: Create systemd service for xray
+  copy:
+    dest: /etc/systemd/system/xray.service
+    content: |
+      [Unit]
+      Description=Xray Service
+      After=network.target
+      
+      [Service]
+      ExecStart=/usr/local/bin/xray -config /etc/xray/config.json
+      Restart=on-failure
+      User=xray
+      Group=xray
+      
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start xray service
+  systemd:
+    name: xray
+    enabled: yes
+    state: started
