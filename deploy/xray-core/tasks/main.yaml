@@ -39,7 +39,9 @@
     owner: xray
     group: xray
     mode: '0644'
-  notify: Restart xray service
+  notify:
+    - Reload systemd daemon
+    - Restart xray service
 
 - name: Create xray log directory
   file:
@@ -65,6 +67,9 @@
       
       [Install]
       WantedBy=multi-user.target
+  notify:
+  - Reload systemd daemon
+  - Restart xray service
 
 - name: Reload systemd daemon
   systemd:
@@ -73,5 +78,4 @@
 - name: Enable and start xray service
   systemd:
     name: xray
-    enabled: yes
     state: started

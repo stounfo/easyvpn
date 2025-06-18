@@ -3,3 +3,8 @@
   systemd:
     name: xray
     state: restarted
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  listen: Reload systemd daemon
