@@ -6,5 +6,5 @@
     - role: nginx
       tags: nginx
 
-    - role: xray-core
-      tags: xray-core
+    - role: xray-vless-reality
+      tags: xray-vless-reality

@@ -1,0 +1,10 @@
+---
+- name: Restart Xray
+  systemd:
+    name: xray
+    state: restarted
+    enabled: yes
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
