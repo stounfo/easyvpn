@@ -166,6 +166,7 @@
     uuid: "{{ generate_uuid.stdout }}"
     private_key: "{{ private_key_cleaned }}"
     short_id: "{{ short_id_cleaned }}"
+  notify: Restart Xray
 
 - name: Deploy systemd service
   copy:

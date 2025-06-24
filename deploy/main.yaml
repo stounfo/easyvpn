@@ -8,3 +8,12 @@
 
     - role: xray-vless-reality
       tags: xray-vless-reality
+
+    - role: xray-exporter
+      tags: xray-exporter
+
+    - role: prometheus
+      tags: prometheus
+
+    - role: grafana
+      tags: grafana
