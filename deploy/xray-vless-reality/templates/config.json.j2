@@ -6,6 +6,7 @@
   },
   "inbounds": [
     {
+      "tag": "vless",
       "port": 443,
       "protocol": "vless",
       "settings": {
@@ -56,13 +57,20 @@
   ],
   "api": {
     "tag": "api",
-    "services": ["StatsService"]
+    "services": [
+        "HandlerService",
+        "LoggerService",
+        "StatsService",
+        "RoutingService",
+        "ReflectionService"
+    ]
   },
   "policy": {
     "levels": {
       "0": {
         "statsUserUplink": true,
-        "statsUserDownlink": true
+        "statsUserDownlink": true,
+        "statsUserOnline": true
       }
     },
     "system": {
