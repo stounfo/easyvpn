@@ -15,8 +15,7 @@
       [Service]
       ExecStart=/usr/local/bin/v2ray-exporter \
         --v2ray-endpoint "127.0.0.1:10085" \
-        --listen "0.0.0.0:9991" \
-        --allow-all
+        --listen "0.0.0.0:9991"
       Restart=always
       User=root
 
