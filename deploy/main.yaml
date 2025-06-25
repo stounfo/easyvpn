@@ -11,9 +11,3 @@
 
     - role: xray-exporter
       tags: xray-exporter
-
-    - role: prometheus
-      tags: prometheus
-
-    - role: grafana
-      tags: grafana

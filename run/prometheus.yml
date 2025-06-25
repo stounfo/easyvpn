@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'v2ray'
+    static_configs:
+      - targets: ['165.227.161.51:9991']
