@@ -12,5 +12,10 @@
 # iCloud generated files
 *.icloud
 
+# python
+**/venv/
+**/__pycache__/
+**/*.pyc
+
 
 
