@@ -1,8 +1,11 @@
+import io
 import json
 from uuid import uuid4
 
+import qrcode
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart, Command, CommandObject
+from aiogram.types import BufferedInputFile
 
 from config import API_TOKEN
 from database import Request, Queue
@@ -21,6 +24,29 @@ async def start(message: types.Message):
         await message.answer("Привет! Введи /token для создания заявки на получение токена")
 
 
+def generate_vless_link(uuid: str) -> str:
+    return f"vless://{uuid}@165.227.161.51:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=zoTJTUgvIi30WGkqZad6vpAVyHE2xFZN0C4frgFB9DM&sid=39224acf&type=tcp&headerType=none#vless-reality"
+
+
+def generate_qr_code(data: str) -> bytes:
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    img_byte_arr = io.BytesIO()
+    img.save(img_byte_arr, 'PNG')
+    img_byte_arr.seek(0)
+
+    return img_byte_arr.getvalue()
+
+
 @dp.message(Command("token"))
 async def create_token(message: types.Message):
     with get_session() as session:
@@ -31,17 +57,32 @@ async def create_token(message: types.Message):
             await message.answer(f"Заявка с id {req.id} создана. Жди одобрения админа.", parse_mode="Markdown")
         except RequestAlreadyExistsError as e:
             req: Request = e.request
-            answer_text = f"Ты уже создавал заявку `id={req.id}`. "
             match req.status:
                 case 'pending':
-                    answer_text += "Заявка на рассмотрении"
+                    answer_text = f"Заявка `id={req.id}` на рассмотрении"
+                    await message.answer(answer_text, parse_mode="Markdown")
                 case 'rejected':
-                    answer_text += "Заявка отклонена. Обратись к администратору для уточнения причины"
+                    answer_text = f"Заявка `id={req.id}` отклонена. Обратись к администратору"
+                    await message.answer(answer_text, parse_mode="Markdown")
                 case 'approved':
-                    pass  # TODO
+                    vless_link = generate_vless_link(req.uuid)
+
+                    caption = (
+                        "✅ *Твой VPN конфиг готов!*\n\n"
+                        "Отсканируй QR-код или скопируй конфиг ниже:\n\n"
+                        f"`{vless_link}`\n\n"
+                        "_Для использования скачай приложение V2Ray или Nekoray_"
+                    )
+
+                    qr_image = generate_qr_code(vless_link)
+
+                    await message.answer_photo(
+                        photo=BufferedInputFile(qr_image, filename="vpn_config.png"),
+                        caption=caption,
+                        parse_mode="Markdown"
+                    )
                 case _:
                     raise ValueError("Unknown type of Request.status")
-            await message.answer(answer_text, parse_mode="Markdown")
 
 
 @dp.message(Command("list"))

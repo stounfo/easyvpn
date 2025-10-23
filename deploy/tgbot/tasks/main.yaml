@@ -33,7 +33,6 @@
     env:
       SQL_ECHO: "true"
       DATABASE_URL: "sqlite:////easyvpn/database/data.db"
-      API_TOKEN: "8013988784:AAEdBhJqjuROhepQd1LRIAYAjG_MruOEqZk"
     volumes:
       - "/opt/easyvpn/database:/easyvpn/database"
     network_mode: host
@@ -42,6 +41,9 @@
   community.docker.docker_container:
     name: tgbot-migrations
     state: absent
+
+- name: Load secrets
+  include_vars: secrets.yml
 
 - name: Run tgbot container
   community.docker.docker_container:
@@ -53,7 +55,7 @@
     env:
       SQL_ECHO: "true"
       DATABASE_URL: "sqlite:////easyvpn/database/data.db"
-      API_TOKEN: "8013988784:AAEdBhJqjuROhepQd1LRIAYAjG_MruOEqZk"
+      API_TOKEN: "{{ api_token }}"
     volumes:
       - "/opt/easyvpn/database:/easyvpn/database"
     network_mode: host

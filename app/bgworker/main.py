@@ -7,8 +7,6 @@ from xtlsapi import XrayClient
 from config import INBOUND_TAG, XRAY_CONFIG_PATH
 from database import get_session, Queue
 
-xray_client = XrayClient('127.0.0.1', 10085)
-
 
 def add_client_to_config(uuid: str, email: str):
     with open(XRAY_CONFIG_PATH, "r", encoding="utf-8") as f:
@@ -34,6 +32,7 @@ def add_client_to_config(uuid: str, email: str):
 
 def process_tasks():
     while True:
+        xray_client = XrayClient('127.0.0.1', 10085)
         with get_session() as session:
             active_process: Queue | None = session.query(Queue).filter(Queue.status == 'created').first()
             if not active_process:
@@ -51,6 +50,7 @@ def process_tasks():
             add_client_to_config(uuid, email)
             print(f"Xray client was added: {payload}")
             time.sleep(60)
+        xray_client.
 
 
 if __name__ == "__main__":
