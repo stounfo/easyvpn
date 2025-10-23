@@ -1,0 +1,59 @@
+---
+- name: Clone repository
+  ansible.builtin.git:
+    repo: "https://github.com/GerasimovRM/easyvpn.git"
+    dest: "/root/easyvpn"
+    version: feature/tg-bot
+    clone: yes
+    update: yes
+
+- name: Build tgbot Docker image
+  community.docker.docker_image:
+    name: "tgbot"
+    source: build
+    build:
+      path: "/root/easyvpn/app/tgbot"
+    force_source: yes
+    state: present
+
+- name: Create database directory
+  file:
+    path: "/opt/easyvpn/database"
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
+
+- name: Run migrations
+  community.docker.docker_container:
+    name: tgbot-migrations
+    image: tgbot
+    state: started
+    command: "alembic upgrade head"
+    env:
+      SQL_ECHO: "true"
+      DATABASE_URL: "sqlite:////easyvpn/database/data.db"
+      API_TOKEN: "8013988784:AAEdBhJqjuROhepQd1LRIAYAjG_MruOEqZk"
+    volumes:
+      - "/opt/easyvpn/database:/easyvpn/database"
+    network_mode: host
+
+- name: Wait for migrations to complete and remove container
+  community.docker.docker_container:
+    name: tgbot-migrations
+    state: absent
+
+- name: Run tgbot container
+  community.docker.docker_container:
+    name: tgbot
+    image: tgbot
+    state: started
+    restart_policy: unless-stopped
+    command: "python3 main.py"
+    env:
+      SQL_ECHO: "true"
+      DATABASE_URL: "sqlite:////easyvpn/database/data.db"
+      API_TOKEN: "8013988784:AAEdBhJqjuROhepQd1LRIAYAjG_MruOEqZk"
+    volumes:
+      - "/opt/easyvpn/database:/easyvpn/database"
+    network_mode: host

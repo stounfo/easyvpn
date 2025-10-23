@@ -12,4 +12,3 @@ class User(BaseSQLAlchemyModel):
     username = Column(String, nullable=False, unique=True)
 
     requests = relationship("Request", back_populates="user", cascade="all, delete-orphan")
-

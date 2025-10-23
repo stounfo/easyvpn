@@ -1,8 +1,11 @@
+import json
+from uuid import uuid4
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart, Command, CommandObject
 
 from config import API_TOKEN
-from database import Request
+from database import Request, Queue
 from database.base_meta import get_session
 from exceptions import RequestAlreadyExistsError
 from services import RequestService, UserService
@@ -61,8 +64,12 @@ async def list_requests(message: types.Message):
 async def approve(message: types.Message, command: CommandObject):
     with get_session() as session:
         req = await RequestService.change_request_status(session, message, command, "approved")
-        # TODO: сгенерить uuid, выслать пользаку ссылку, добавить в конфиг этот uuid
         if req:
+            req.uuid = str(uuid4())
+            username = req.user.username
+            queue = Queue(payload=json.dumps({"uuid": req.uuid, "email": username}))
+            session.add(queue)
+            session.commit()
             await message.answer(f"Заявка апрувнута {req}")
 
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, Boolean, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database.base_sqlalchemy_model import BaseSQLAlchemyModel
@@ -14,5 +14,7 @@ class Request(BaseSQLAlchemyModel):
     status = Column(String, default="pending", nullable=False)  # pending / approved / rejected
     uuid = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    queue_id = Column(Integer, ForeignKey("queues.id"))
 
     user = relationship("User", back_populates="requests")
+    queue = relationship("Queue")
