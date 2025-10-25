@@ -111,6 +111,9 @@ async def approve(message: types.Message, command: CommandObject):
             queue = Queue(payload=json.dumps({"uuid": req.uuid, "email": username}))
             session.add(queue)
             session.commit()
+
+            user_id = req.user.telegram_id
+            await bot.send_message(chat_id=user_id, text=f"Заявка одобрена. Используйте /token для получения", parse_mode="Markdown")
             await message.answer(f"Заявка апрувнута {req}")
 
 
