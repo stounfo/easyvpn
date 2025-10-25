@@ -43,7 +43,7 @@
     state: absent
 
 - name: Load secrets
-  include_vars: secrets.yml
+  include_vars: secrets.yaml
 
 - name: Run tgbot container
   community.docker.docker_container:

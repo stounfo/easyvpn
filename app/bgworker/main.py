@@ -8,6 +8,19 @@ from config import INBOUND_TAG, XRAY_CONFIG_PATH
 from database import get_session, Queue
 
 
+def is_uuid_in_config(uuid: str) -> bool:
+    with open(XRAY_CONFIG_PATH, "r", encoding="utf-8") as f:
+        config = json.load(f)
+
+    for inbound in config.get("inbounds", []):
+        if inbound.get("tag", None) == INBOUND_TAG:
+            clients = inbound.get("settings", {}).get("clients", [])
+            return any(map(lambda client: client["id"] == uuid, clients))
+        else:
+            print("Something wrong with config.json")
+            return True
+
+
 def add_client_to_config(uuid: str, email: str):
     with open(XRAY_CONFIG_PATH, "r", encoding="utf-8") as f:
         config = json.load(f)
@@ -27,7 +40,7 @@ def add_client_to_config(uuid: str, email: str):
             break
 
     else:
-        logging.warning(f"Inbound with tag '{INBOUND_TAG}' not found in config")
+        print(f"Inbound with tag '{INBOUND_TAG}' not found in config")
 
 
 def process_tasks():
@@ -43,6 +56,10 @@ def process_tasks():
             uuid = payload.get("uuid")
             email = payload.get("email")
 
+            if is_uuid_in_config(uuid):
+                print("uuid already exist")
+                continue
+
             user = xray_client.add_client(INBOUND_TAG, uuid, email, flow="xtls-rprx-vision")
             active_process.status = "completed"
             active_process.completed = datetime.datetime.utcnow()
@@ -50,7 +67,6 @@ def process_tasks():
             add_client_to_config(uuid, email)
             print(f"Xray client was added: {payload}")
             time.sleep(60)
-        xray_client.
 
 
 if __name__ == "__main__":
