@@ -46,5 +46,7 @@ class RequestService:
         if not req:
             await message.answer(f"Заявка с id {req_id} не найдена")
             return None
+        if req.status != 'pending':
+            await message.answer(f"Заявка с id {req_id} уже исполнена")
         req.status = status
         return req
