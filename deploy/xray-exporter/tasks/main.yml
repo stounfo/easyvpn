@@ -1,0 +1,29 @@
+- name: Download v2ray-exporter
+  get_url:
+    url: https://github.com/wi1dcard/v2ray-exporter/releases/latest/download/v2ray-exporter_linux_amd64
+    dest: /usr/local/bin/v2ray-exporter
+    mode: '0755'
+
+- name: Create systemd service for v2ray-exporter
+  copy:
+    dest: /etc/systemd/system/v2ray-exporter.service
+    content: |
+      [Unit]
+      Description=V2Ray/Xray Prometheus Exporter
+      After=network.target
+
+      [Service]
+      ExecStart=/usr/local/bin/v2ray-exporter \
+        --v2ray-endpoint "127.0.0.1:10085" \
+        --listen "0.0.0.0:9991"
+      Restart=always
+      User=root
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Start and enable v2ray-exporter
+  systemd:
+    name: v2ray-exporter
+    enabled: yes
+    state: started

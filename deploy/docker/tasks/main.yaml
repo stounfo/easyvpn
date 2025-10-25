@@ -6,3 +6,8 @@
       vars:
         docker_package_state: latest
   become: yes
+- name: Install Docker SDK for Python3 via apt
+  apt:
+    name: python3-docker
+    state: present
+  become: yes

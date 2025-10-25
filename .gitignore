@@ -1,10 +1,16 @@
 ### Personal ###
 .dev
 
+# JetBrains IDE
+.idea
+
 ### macOS ###
+
 # General
 .DS_Store
 
 # iCloud generated files
 *.icloud
+
+
 

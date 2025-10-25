@@ -5,3 +5,9 @@
 
     - role: nginx
       tags: nginx
+
+    - role: xray-vless-reality
+      tags: xray-vless-reality
+
+    - role: xray-exporter
+      tags: xray-exporter
