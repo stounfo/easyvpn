@@ -68,10 +68,21 @@ async def create_token(message: types.Message):
                     vless_link = generate_vless_link(req.uuid)
 
                     caption = (
-                        "✅ *Твой VPN конфиг готов!*\n\n"
+                        "✅ *Твой VPN-конфиг готов!*\n\n"
                         "Отсканируй QR-код или скопируй конфиг ниже:\n\n"
                         f"`{vless_link}`\n\n"
-                        "_Для использования скачай приложение V2Ray или Nekoray_"
+                        "📱 *Клиенты с поддержкой VLESS-Reality:*\n\n"
+                        "🖥 **Windows / macOS**\n"
+                        "• [v2rayN (Windows/macOS)](https://en.v2rayn.org/download/)\n"
+                        "• [Hiddify (Windows)](https://hiddify.com/)\n"
+                        "• [Streisand (macOS)](https://apps.apple.com/ru/app/streisand/id6450534064)\n\n"
+                        "🤖 **Android**\n"
+                        "• [v2RayTun](https://play.google.com/store/apps/details?id=com.v2raytun.android&hl=ru)\n"
+                        "• [Hiddify](https://play.google.com/store/search?q=Hiddify&c=apps&hl=ru)\n\n"
+                        "🍏 **iOS**\n"
+                        "• [Streisand](https://apps.apple.com/ru/app/streisand/id6450534064)\n"
+                        "• [Hiddify](https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532)\n\n"
+                        "_Совет: после установки просто импортируй QR-код или вставь ссылку вручную._"
                     )
 
                     qr_image = generate_qr_code(vless_link)

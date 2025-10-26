@@ -39,11 +39,6 @@
     - /etc/xray
     - /var/log/xray
 
-- name: Generate UUID
-  command: /usr/local/bin/xray uuid
-  register: generate_uuid
-  changed_when: false
-
 # Работа с приватным ключом
 - name: Check if private key file exists
   stat:
@@ -155,7 +150,12 @@
       public_key: "{{ public_key_cleaned }}"
       short_id: "{{ short_id_cleaned }}"
 
-- name: Deploy Xray config
+- name: Check if config.json exists
+  stat:
+    path: /etc/xray/config.json
+  register: config_file
+
+- name: Deploy Xray config if not exist
   template:
     src: config.json.j2
     dest: /etc/xray/config.json
@@ -163,9 +163,9 @@
     group: xray
     mode: '0644'
   vars:
-    uuid: "{{ generate_uuid.stdout }}"
     private_key: "{{ private_key_cleaned }}"
     short_id: "{{ short_id_cleaned }}"
+  when: not config_file.stat.exists
   notify: Restart Xray
 
 - name: Deploy systemd service

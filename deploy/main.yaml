@@ -12,9 +12,6 @@
     - role: xray-exporter
       tags: xray-exporter
 
-    - role: xray-exporter
-      tags: xray-exporter
-
     - role: tgbot
       tags: tgbot
 
