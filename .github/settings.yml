@@ -23,7 +23,10 @@ repository:
 labels:
 milestones:
 collaborators:
-teams:
+  - username: stounfo
+    permission: admin
+  - username: GerasimovRM
+    permission: admin
 
 branches:
   - name: master
