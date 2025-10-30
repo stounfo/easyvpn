@@ -2,7 +2,7 @@ repository:
   name: easyvpn
   description: A VPN that is easy to use and maintain
   homepage: https://example.github.io/
-  topics: vpn
+  topics: vpn, python
   private: false
 
   has_issues: true
