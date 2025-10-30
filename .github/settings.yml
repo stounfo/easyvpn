@@ -1,0 +1,30 @@
+repository:
+  name: easyvpn
+  description: A VPN that is easy to use and maintain
+  homepage: https://example.github.io/
+  topics:
+    - vpn
+  private: false
+
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  has_downloads: true
+
+  default_branch: main
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: false
+  delete_branch_on_merge: true
+
+  enable_automated_security_fixes: true
+  enable_vulnerability_alerts: true
+
+# Labels: define labels for Issues and Pull Requests
+labels:
+milestones:
+collaborators:
+teams:
+
+branches:
+  - name: master
