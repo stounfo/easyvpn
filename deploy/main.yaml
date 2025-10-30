@@ -11,3 +11,9 @@
 
     - role: xray-exporter
       tags: xray-exporter
+
+    - role: tgbot
+      tags: tgbot
+
+    - role: bgworker
+      tags: bgworker

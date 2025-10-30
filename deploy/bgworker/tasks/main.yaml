@@ -1,0 +1,45 @@
+---
+- name: Clone repository
+  ansible.builtin.git:
+    repo: "https://github.com/GerasimovRM/easyvpn.git"
+    dest: "/root/easyvpn"
+    version: feature/tg-bot
+    clone: yes
+    update: yes
+
+- name: Build bgworker Docker image
+  community.docker.docker_image:
+    name: "bgworker"
+    source: build
+    build:
+      path: "/root/easyvpn/app/bgworker"
+    force_source: yes
+    state: present
+
+- name: Create database directory
+  file:
+    path: "/opt/easyvpn/database"
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
+
+- name: Run bgworker container
+  community.docker.docker_container:
+    name: bgworker
+    image: bgworker
+    state: started
+    restart_policy: unless-stopped
+    command: "python3 main.py"
+    env:
+      SQL_ECHO: "false"
+      DATABASE_URL: "sqlite:////easyvpn/database/data.db"
+      XRAY_SERVER: "127.0.0.1"
+      XRAY_PORT: "10085"
+      INBOUND_TAG: "vless"
+      XRAY_CONFIG_PATH: "/easyvpn/xray/config.json"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - "/opt/easyvpn/database:/easyvpn/database"
+      - "/etc/xray:/easyvpn/xray"
+    network_mode: host
