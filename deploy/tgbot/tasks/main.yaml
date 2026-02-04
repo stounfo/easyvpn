@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: "https://github.com/GerasimovRM/easyvpn.git"
     dest: "/root/easyvpn"
-    version: feature/tg-bot
+    version: bugfix/remove-logs
     clone: yes
     update: yes
 
