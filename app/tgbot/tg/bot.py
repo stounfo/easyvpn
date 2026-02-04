@@ -1,9 +1,11 @@
+import asyncio
 import io
 import json
 from uuid import uuid4
 
 import qrcode
 from aiogram import Bot, Dispatcher, types
+from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import BufferedInputFile
 
@@ -12,6 +14,8 @@ from database import Request, Queue
 from database.base_meta import get_session
 from exceptions import RequestAlreadyExistsError
 from services import RequestService, UserService
+
+from app.tgbot.database import User
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
@@ -25,7 +29,7 @@ async def start(message: types.Message):
 
 
 def generate_vless_link(uuid: str) -> str:
-    return f"vless://{uuid}@165.227.161.51:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=zoTJTUgvIi30WGkqZad6vpAVyHE2xFZN0C4frgFB9DM&sid=39224acf&type=tcp&headerType=none#vless-reality"
+    return f"vless://{uuid}@165.227.161.51:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.nvidia.com&fp=chrome&pbk=zoTJTUgvIi30WGkqZad6vpAVyHE2xFZN0C4frgFB9DM&sid=39224acf&type=tcp&headerType=none#vless-reality"
 
 
 def generate_qr_code(data: str) -> bytes:
@@ -80,6 +84,7 @@ async def create_token(message: types.Message):
                         "• [v2RayTun](https://play.google.com/store/apps/details?id=com.v2raytun.android&hl=ru)\n"
                         "• [Hiddify](https://play.google.com/store/search?q=Hiddify&c=apps&hl=ru)\n\n"
                         "🍏 **iOS**\n"
+                        "• [v2RayTun](https://apps.apple.com/ru/app/v2raytun/id6476628951)\n\n"
                         "• [Streisand](https://apps.apple.com/ru/app/streisand/id6450534064)\n"
                         "• [Hiddify](https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532)\n\n"
                         "_Совет: после установки просто импортируй QR-код или вставь ссылку вручную._"
@@ -115,6 +120,7 @@ async def list_requests(message: types.Message):
 @dp.message(Command("approve"))
 async def approve(message: types.Message, command: CommandObject):
     with get_session() as session:
+        admin = UserService.get_admin(session, message.from_user.id)
         req = await RequestService.change_request_status(session, message, command, "approved")
         if req:
             req.uuid = str(uuid4())
@@ -128,9 +134,35 @@ async def approve(message: types.Message, command: CommandObject):
             await message.answer(f"Заявка апрувнута {req}")
 
 
+@dp.message(Command("notificate"))
+async def notificate(message: types.Message, command: CommandObject):
+    with get_session() as session:
+        admin = UserService.get_admin(session, message.from_user.id)
+        broadcast_text = command.args
+        if not broadcast_text:
+            return await message.answer("Введите текст уведомления: /notificate Привет всем!")
+        users = session.query(User).all()
+        count = 0
+        for user in users:
+            try:
+                await message.bot.send_message(chat_id=user.telegram_id, text=broadcast_text)
+                count += 1
+                await asyncio.sleep(0.05)
+            except TelegramForbiddenError:
+                print(f"Пользователь {user.telegram_id} заблокировал бота")
+            except TelegramRetryAfter as e:
+                await asyncio.sleep(e.retry_after)
+                await message.bot.send_message(chat_id=user.telegram_id, text=broadcast_text)
+            except Exception as e:
+                print(f"Ошибка при отправке {user.telegram_id}: {e}")
+
+        await message.answer(f"Рассылка завершена. Получили: {count} чел.")
+
+
 @dp.message(Command("reject"))
 async def reject(message: types.Message, command: CommandObject):
     with get_session() as session:
+        admin = UserService.get_admin(session, message.from_user.id)
         req = await RequestService.change_request_status(session, message, command, "rejected")
         if req:
             await message.answer(f"Заявка отклонена {req}")
