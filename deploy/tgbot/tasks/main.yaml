@@ -1,7 +1,7 @@
 ---
 - name: Clone repository
   ansible.builtin.git:
-    repo: "https://github.com/GerasimovRM/easyvpn.git"
+    repo: "https://github.com/stounfo/easyvpn.git"
     dest: "/root/easyvpn"
     version: bugfix/remove-logs
     clone: yes
