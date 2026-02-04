@@ -10,12 +10,11 @@ from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import BufferedInputFile
 
 from config import API_TOKEN
-from database import Request, Queue
+from database import Request, Queue, User
 from database.base_meta import get_session
 from exceptions import RequestAlreadyExistsError
 from services import RequestService, UserService
 
-from app.tgbot.database import User
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
