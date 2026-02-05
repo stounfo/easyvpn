@@ -13,6 +13,7 @@ def is_uuid_in_config(uuid: str) -> bool:
         config = json.load(f)
 
     for inbound in config.get("inbounds", []):
+        print(inbound)
         if inbound.get("tag", None) == INBOUND_TAG:
             clients = inbound.get("settings", {}).get("clients", [])
             return any(map(lambda client: client["id"] == uuid, clients))
